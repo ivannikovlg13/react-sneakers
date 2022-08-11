@@ -1,87 +1,95 @@
-import { Header, CardItem, Drawer } from './components';
+import { Drawer } from './components';
+import Home from './pages/Home';
+import Header from './components/header';
+import React from 'react';
+import axios from 'axios';
+import { Route, Routes } from 'react-router-dom';
+import Favorites from './pages/Favorites';
 
-const items = [
-  {
-    id: 1,
-    name: 'Мужские Кроссовки Nike Blazer Mid Suede',
-    price: '12 999 руб.',
-    imageUrl: './img/sneakers/1.jpg',
-  },
-  {
-    id: 2,
-    name: 'Мужские Кроссовки Nike Air Max 270',
-    price: '12 999 руб.',
-    imageUrl: './img/sneakers/2.jpg',
-  },
-  {
-    id: 3,
-    name: 'Мужские Мужские Кроссовки Under Armour Curry 8',
-    price: '8 499 руб.',
-    imageUrl: './img/sneakers/3.jpg',
-  },
-  {
-    id: 4,
-    name: 'Кроссовки Puma X Aka Boku Future Rider',
-    price: '9 499 руб.',
-    imageUrl: './img/sneakers/4.jpg',
-  },
-  {
-    id: 5,
-    name: 'Мужские Кроссовки Nike Kyrie 7',
-    price: '13 499 руб.',
-    imageUrl: './img/sneakers/5.jpg',
-  },
-  {
-    id: 6,
-    name: 'Мужские Кроссовки Jordan Air Jordan 11',
-    price: '6 499 руб.',
-    imageUrl: './img/sneakers/6.jpg',
-  },
-  {
-    id: 7,
-    name: 'Мужские Кроссовки Nike LeBron XVIII',
-    price: '8 449 руб.',
-    imageUrl: './img/sneakers/7.jpg',
-  },
-  {
-    id: 8,
-    name: 'Мужские Кроссовки Nike Lebron XVIII Low',
-    price: '22 469 руб.',
-    imageUrl: './img/sneakers/8.jpg',
-  },
-  {
-    id: 9,
-    name: 'Мужские Кроссовки Nike Blazer Mid Suede',
-    price: '20 499 руб.',
-    imageUrl: './img/sneakers/9.jpg',
-  },
-  {
-    id: 10,
-    name: 'Мужские Кроссовки Nike Kyrie Flytrap IV',
-    price: '19 499 руб.',
-    imageUrl: './img/sneakers/10.jpg',
-  },
-];
 function App() {
+  const [items, setItems] = React.useState([]);
+  const [cartItems, setCartItems] = React.useState([]);
+  const [favoriteItems, setFavoriteItems] = React.useState([]);
+  const [searchValue, setSearchValue] = React.useState('');
+  const [onCart, setOnCart] = React.useState(false);
+  React.useEffect(() => {
+    axios
+      .get('https://62f283c2b1098f150814998d.mockapi.io/items')
+      .then(({ data }) => setItems(data));
+    axios
+      .get('https://62f283c2b1098f150814998d.mockapi.io/cart')
+      .then(({ data }) => setCartItems(data));
+    axios
+      .get('https://62f283c2b1098f150814998d.mockapi.io/favorites')
+      .then(({ data }) => setFavoriteItems(data));
+  }, []);
+
+  const onAddToCart = async (obj) => {
+    try {
+      const { data } = await axios.post('https://62f283c2b1098f150814998d.mockapi.io/cart', obj);
+      setCartItems((prev) => [...prev, data]);
+    } catch (error) {
+      alert('Не удалось добавить в корзину');
+    }
+  };
+  const onRemoveWithCart = (id) => {
+    axios.delete(`https://62f283c2b1098f150814998d.mockapi.io/cart/${id}`);
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+  const onAddToFavorites = async (obj) => {
+    try {
+      if (favoriteItems.find((item) => item.id === obj.id)) {
+        axios.delete(`https://62f283c2b1098f150814998d.mockapi.io/favorites/${obj.id}`);
+      } else {
+        const { data } = await axios.post(
+          'https://62f283c2b1098f150814998d.mockapi.io/favorites',
+          obj,
+        );
+        setFavoriteItems((prev) => [...prev, data]);
+      }
+    } catch (error) {
+      alert('Не удалось добавить в избранные');
+    }
+  };
+  const filterItems = items.filter((item) => {
+    return item.name.toLowerCase().includes(searchValue.toLowerCase());
+  });
+  const onSearchValue = (event) => {
+    setSearchValue(event.target.value);
+  };
+  const clearSearch = () => {
+    setSearchValue('');
+  };
+
+  const openCart = () => {
+    setOnCart(!onCart);
+  };
+
+  const closeCart = () => {
+    setOnCart(!onCart);
+  };
+
   return (
     <div className="wrapper clear">
-      <Drawer />
-      <Header />
-      <section className="card">
-        <div className="d-flex justify-between align-center mb-40 mt-40">
-          <h1>Все кроссовки</h1>
-          <div className="search__block d-flex align-center pl-10 pr-10">
-            <img src="./img/icons/search.svg" alt="search" />
-            <input type="text" placeholder="Search..." />
-          </div>
-        </div>
-
-        <div className="card__items">
-          {items.map((item) => (
-            <CardItem key={item.id} {...item} />
-          ))}
-        </div>
-      </section>
+      {onCart && <Drawer items={cartItems} closeCart={closeCart} deleteItem={onRemoveWithCart} />}
+      <Header openCart={openCart} />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Home
+              onSearchValue={onSearchValue}
+              clearSearch={clearSearch}
+              searchValue={searchValue}
+              filterItems={filterItems}
+              onAddToCart={onAddToCart}
+              onAddToFavorites={onAddToFavorites}
+            />
+          }></Route>
+        <Route
+          path="/favorites"
+          element={<Favorites items={favoriteItems} addToFavorites={onAddToFavorites} />}></Route>
+      </Routes>
     </div>
   );
 }

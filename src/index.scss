@@ -8,7 +8,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #e7f6ff;
 }
-
+button,
 h1,
 h2,
 h3,
@@ -16,10 +16,39 @@ p {
   margin: 0;
   padding: 0;
 }
-.imgBtn {
+h1 {
+  font-size: 1.5rem;
+}
+button {
+  background: none;
+  border: none;
   cursor: pointer;
 }
+button.greenBtn {
+  width: 100%;
+  background: #9dd558;
+  border-radius: 18px;
+  height: 55px;
+  font-weight: 600;
+  color: #fff;
+  transition: background 0.1s ease-in-out;
+  position: relative;
 
+  &:hover {
+    background: lighten($color: #9dd558, $amount: 5%);
+    img {
+      transform: translateX(5px);
+    }
+  }
+  &:active {
+    background: darken($color: #9dd558, $amount: 5%);
+  }
+  img {
+    position: absolute;
+    right: 30px;
+    transition: transform 0.15s ease-in-out;
+  }
+}
 .wrapper {
   background-color: #ffffff;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.04);
@@ -28,161 +57,34 @@ p {
   margin: 0 auto;
   margin-top: 85px;
   position: relative;
-  header {
-    height: 130px;
-    padding: 0 50px;
-    border-bottom: 1px solid #eaeaea;
-    .left-block {
-      h3 {
-        font-size: 20px;
-      }
-      p {
-        font-size: 14px;
-        line-height: 17px;
-        color: #9d9d9d;
-      }
-    }
-    ul {
-      li:nth-last-child(1) {
-        margin-left: 30px;
-      }
-    }
+}
+.card {
+  padding: 0 50px 40px;
+  &__items {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
   }
-
-  .card {
-    padding: 0 50px 40px;
-    &__items {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .search__block {
-      border: 1px solid #f3f3f3;
-      border-radius: 10px;
-      width: 250px;
-      input {
-        border: 0;
-        padding: 14px 0 14px 10px;
-        width: 100%;
-      }
-    }
-    &__item {
-      width: 210px;
-      padding: 30px;
-      border: 1px solid #f3f3f3;
-      border-radius: 40px;
-      transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
-      &:hover {
-        box-shadow: 0px 14px 36px rgba(0, 0, 0, 0.08);
-        transform: translateY(-5px);
-      }
-
-      .info__box {
-        p {
-          margin: 14px 0;
-          font-size: 14px;
-          line-height: 17px;
-        }
-        .price {
-          font-weight: 500;
-          font-size: 11px;
-          line-height: 13px;
-          color: #bdbdbd;
-        }
-      }
-    }
-  }
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.1);
-    z-index: 3;
-  }
-  .drawer {
-    position: absolute;
-    height: 100%;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    width: 420px;
-    padding: 30px;
-    background-color: #fff;
-    box-shadow: -10px 4px 24px rgba(0, 0, 0, 0.1);
-    .cartItems {
-      flex: 1 1;
-      overflow: auto;
-      margin-bottom: 40px;
-      .cartItem {
-        border: 1px solid #f3f3f3;
-        border-radius: 20px;
-        overflow: hidden;
-        padding: 20px;
-        p {
-          font-size: 16px;
-        }
-        b {
-          font-size: 14px;
-        }
-        .removeBtn {
-          opacity: 0.4;
-          transition: opacity 0.15s ease-in-out;
-          &:hover {
-            opacity: 1;
-          }
-        }
-      }
-    }
-    .cartItemImg {
-      width: 70px;
-      height: 70px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: 0 -3px;
-      margin-right: 20px;
-    }
-    .cartTotalBlock {
-      margin-bottom: 40px;
-      li {
-        display: flex;
-        align-items: flex-end;
-        & + li {
-          margin-top: 20px;
-        }
-      }
-      div {
-        position: relative;
-        top: -4px;
-        flex: 1;
-        height: 1px;
-        border-bottom: 1px dashed #dfdfdf;
-        margin: 0 10px;
-      }
-    }
-    button.greenBtn {
+  .search__block {
+    border: 1px solid #f3f3f3;
+    border-radius: 10px;
+    width: 250px;
+    input {
+      border: 0;
+      padding: 14px 0 14px 10px;
       width: 100%;
-      background: #9dd558;
-      border-radius: 18px;
-      height: 55px;
-      font-weight: 600;
-      color: #fff;
-      transition: background 0.1s ease-in-out;
-      position: relative;
-      &:hover {
-        background: lighten($color: #9dd558, $amount: 5%);
-        img {
-          transform: translateX(5px);
-        }
-      }
-      &:active {
-        background: darken($color: #9dd558, $amount: 5%);
-      }
-      img {
-        position: absolute;
-        right: 30px;
-        transition: transform 0.15s ease-in-out;
-      }
     }
+  }
+}
+
+.removeBtn {
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.15s ease-in-out;
+  &:hover {
+    opacity: 1;
+  }
+  &.search {
+    width: 25px;
+    margin-left: 10px;
   }
 }
