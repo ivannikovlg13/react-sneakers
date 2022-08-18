@@ -22,7 +22,9 @@
   .cartItems {
     flex: 1 1;
     overflow: auto;
-    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     .cartItem {
       display: flex;
       align-items: center;
