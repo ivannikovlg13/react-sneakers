@@ -2,13 +2,13 @@ import React from 'react';
 import styles from './drawer.module.scss';
 import axios from 'axios';
 import Info from '../Info';
-import AppContext from '../../context';
+import { useCart } from '../../hooks/useCart';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function Drawer({ closeCart, items = [], deleteItem }) {
+function Drawer({ closeCart, items = [], deleteItem, opened }) {
   const [isOrderComplete, setIsOrderComplete] = React.useState(false);
-  const { cartItems, setCartItems } = React.useContext(AppContext);
+  const { cartItems, setCartItems, totalPrice } = useCart();
   const [orderId, setOrderId] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -32,7 +32,7 @@ function Drawer({ closeCart, items = [], deleteItem }) {
     setIsLoading(false);
   };
   return (
-    <div className={styles.overlay}>
+    <div className={`${styles.overlay} ${opened ? styles.overlayVisible : ''}`}>
       <div className={styles.drawer}>
         <h2 className=" d-flex justify-between mb-30">
           Корзина
@@ -45,7 +45,7 @@ function Drawer({ closeCart, items = [], deleteItem }) {
         </h2>
         {items.length > 0 ? (
           <div className={styles.cartItems}>
-            <div>
+            <div className={styles.inner}>
               {items.map((item) => (
                 <div key={item.id} className={styles.cartItem}>
                   <div
@@ -69,12 +69,12 @@ function Drawer({ closeCart, items = [], deleteItem }) {
                 <li>
                   <span>Итого:</span>
                   <div></div>
-                  <b>21 498 руб. </b>
+                  <b>{totalPrice} $ </b>
                 </li>
                 <li>
                   <span>Налог 5%:</span>
                   <div></div>
-                  <b>1074 руб. </b>
+                  <b>{Math.floor(totalPrice * 0.05)} $ </b>
                 </li>
               </ul>
             </div>
